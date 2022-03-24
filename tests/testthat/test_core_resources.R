@@ -1,0 +1,13 @@
+test_that("Essential package files are present and correct", {
+  expect_true(exists("qref"))
+  expect_identical(dim(qref), c(255L, 13L))
+  expect_true(exists(".categorical_hic"))
+  expect_true(exists(".preserved_classes"))
+  expect_true(exists(".variables"))
+  expect_true(exists(".provenance"))
+  expect_true(exists(".events"))
+  expect_true(exists(".episodes"))
+  expect_true(exists(".multip"))
+  expect_identical(length(.multip), 8L)
+  expect_identical(class(.multip), "numeric")
+})

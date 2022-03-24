@@ -1,0 +1,49 @@
+Package: inspectEHR
+Type: Package
+Title: Data Quality Evaluation and Reporting for CC-HIC
+Version: 1.0.0
+Authors@R: c(
+    person("Edward", "Palmer",
+    role = c("aut", "cre"),
+    email = "edward.palmer@ucl.ac.uk",
+    comment = c(ORCID = "0000-0002-8024-4616"))
+    )
+Description: This package helps to produce data quality reports for CC-HIC.
+    This primarily follows the Kahn data quality evaluation framework.
+License: GPL-3
+Depends:
+    R (>= 3.4.0)
+Encoding: UTF-8
+LazyData: true
+Imports:
+    DBI,
+    dbplyr,
+    dplyr (>= 0.8.0),
+    ggplot2,
+    glue,
+    hms,
+    lubridate,
+    magrittr,
+    rlang (>= 0.4.0),
+    patchwork,
+    purrr,
+    scales,
+    stringr,
+    tibble,
+    tidyr,
+    tidyselect,
+    wranglEHR,
+    cli
+RoxygenNote: 7.1.1
+Suggests:
+    RPostgres,
+    RSQLite,
+    covr,
+    knitr,
+    praise,
+    rmarkdown,
+    testthat,
+    qpdf
+VignetteBuilder: knitr
+URL: https://github.com/CC-HIC/inspectEHR
+BugReports: https://github.com/CC-HIC/inspectEHR

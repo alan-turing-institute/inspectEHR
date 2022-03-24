@@ -1,0 +1,87 @@
+---
+title: "Data extraction using inspectEHR"
+author: "Edward Palmer"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Data extraction using inspectEHR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+`inspectEHR` contains a number of helper functions for direct data extraction.
+The focus of data extraction in `inspectEHR` is to facilitate data quality evaluation.
+As a result, the data extraction is optimised for extracting a single data item or closely related data items.
+This approach is unlikely to be of direct use to analyst, who will likely need
+to extract a large number of different concepts for a specific patient cohort.
+In this latter case use, please refer to the `wranglEHR` package, which is optimised for this purpose.
+
+In order to use `inspectEHR` you first need to install it with:
+
+```{r, eval = FALSE}
+# If you need inspectEHR
+remotes::install_github("DocEd/inspectEHR")
+```
+
+Now load `inspectEHR`, establish a database connection and make the `core` table.
+The `core` table is a remote query that includes all correct joins, so that you know it is safe to work with.
+
+```r
+library(inspectEHR)
+
+## Establish a database connection using DBI
+## Details omitted here for security
+ctn <- DBI::dbConnect()
+core <- make_core(ctn)
+```
+
+```{r, include = FALSE}
+library(inspectEHR)
+core <- make_core(.debug = TRUE)
+```
+
+Now you can extract whatever data you wish with the `extract` function.
+This is the `S3` generic that will apply the correct method to extract a specified CC-HIC event.
+
+```{r}
+# Extract Heart Rates
+hr <- extract(core, code_name = "NIHR_HIC_ICU_0108")
+knitr::kable(head(hr, 10))
+```
+
+The event has been extracted into a standardised format, including other features that are typically useful when evaluating the context of data quality (e.g. where and when the data originated).
+
+More complex data item extraction is also possible, and requires no further effort than seen above.
+We can demonstrate with central venous pressure (CVP), which contains metadata.
+
+```{r}
+# Extract CVP
+cvp <- extract(core, code_name = "NIHR_HIC_ICU_0116")
+knitr::kable(head(cvp, 10))
+```
+
+Now you can see an additional column containing the correct metadata.
+All column classes are handled automatically, including all metadata and timestamps for more complex data items.
+In this way the end user can be sure that the whole event has been extracted, without referring to the CC-HIC data model (which is not intuitive to interpret).
+
+The extracted event is tagged with some useful attributes: `code_name` and `class`.
+
+```{r}
+attr(hr, "code_name")
+class(hr)
+```
+
+The class encodes the temporally of the event (is it time variant or not) and the data type (integer, string, real etc.).
+This is useful in method dispatch when writing data quality evaluation functions.
+The methods currently available for a class can be viewed with `methods()`
+
+```{r}
+methods(class = "integer_1d")
+```

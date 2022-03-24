@@ -1,0 +1,45 @@
+---
+title: "Data Quality Evaluation with inspectEHR"
+author: "Edward Palmer"
+date: "20th September 2019. Updated: `r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Data Quality Evaluation with inspectEHR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The primary role of `inspectEHR` is to process the data inside CC-HIC in such a way as to make it ready to produce a data quality report.
+
+First, install and load `inspectEHR` from github, or download the latest release directly.
+
+```{r, eval = FALSE}
+# If you need inspectEHR
+remotes::install_github("DocEd/inspectEHR")
+library(inspectEHR)
+
+## Establish a database connection using DBI
+## Details omitted here for security
+ctn <- DBI::dbConnect()
+output_path <- "where/i/want/to/save"
+```
+
+Supply the `perform_evaluation` function with an output folder.
+Please note, you must have write access to both the database and output folder for this to work.
+You can optionally supply a table with lookups for each contributing site, to conceal the site level identity
+of any output.
+The verbose argument is useful to keep track of progress and to debug if there are any issues.
+
+```{r, eval = FALSE}
+perform_evaluation(connection = ctn,
+                   output_folder = output_path,
+                   verbose = TRUE)
+```
+

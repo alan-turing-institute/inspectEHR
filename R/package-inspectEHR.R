@@ -1,0 +1,11 @@
+#' inspectEHR
+#'
+#' This package contains functions for data quality evaluation of the CC-HIC
+#' database. This follows the framework described by Kahn and approaches the
+#' problem through verification and validation. It's sister package
+#' \code{wranglEHR} contains several functions to help extract and work with the
+#' data.
+#'
+#' @name inspectEHR
+#' @docType package
+NULL
