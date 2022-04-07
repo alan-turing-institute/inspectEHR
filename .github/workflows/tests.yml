@@ -16,7 +16,8 @@ jobs:
         env:
           GITHUB_PAT: ${{ secrets.PAT }}
         run: |
-          Rscript -e 'install.packages("devtools")'
-          Rscript -e 'devtools::install_github("DocEd/commonEHR")'
-          Rscript -e 'devtools::install_github("DocEd/wranglEHR")'
-          Rscript -e 'devtools::install_local(".")'
+          Rscript -e 'install.packages("renv")'
+          Rscript -e 'renv::activate()'
+          Rscript -e 'renv::install("DocEd/commonEHR")'
+          Rscript -e 'renv::install("DocEd/wranglEHR")'
+          Rscript -e 'renv::install(".")'
