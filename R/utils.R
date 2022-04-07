@@ -56,7 +56,7 @@ write_notify <- function(connection,
                          verbose = TRUE,
                          ...) {
   success <- dbWriteTable(
-    conn = ctn,
+    conn = connection,
     name = target_name,
     value = local_table, ...)
   if (success) {
