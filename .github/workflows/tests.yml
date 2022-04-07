@@ -21,3 +21,4 @@ jobs:
           Rscript -e 'renv::install("DocEd/commonEHR")'
           Rscript -e 'renv::install("DocEd/wranglEHR")'
           Rscript -e 'renv::install(".")'
+          Rscript -e 'packageVersion("inspectEHR")'
