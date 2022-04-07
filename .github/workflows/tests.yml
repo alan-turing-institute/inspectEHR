@@ -22,8 +22,7 @@ jobs:
           Rscript -e 'renv::activate()'
           Rscript -e 'options(renv.settings = list(package.dependency.fields = c("Imports", "Depends", "LinkingTo", "Suggests")))'
           Rscript -e 'renv::install()'
-          Rscript -e 'renv::install(".")'
       - name: TestThat
         run: |
           Rscript -e 'packageVersion("inspectEHR")'
-          Rscript -e 'testthat::test_file("tests/testthat/test_perform_evaluation.R")'
+          Rscript -e 'library(inspectEHR);testthat::test_file("tests/testthat/test_perform_evaluation.R")'
