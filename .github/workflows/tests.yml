@@ -12,4 +12,10 @@ jobs:
         uses: r-lib/actions/setup-r@v2
         with:
           r-version: 4.1.2
-      - run: Rscript -e 'print("hello")'
+      - name: Install dependencies
+        env:
+          GITHUB_PAT: ${{ secrets.PAT }}
+        run: |
+          Rscript -e 'install.packages("remotes")'
+          Rscript -e 'remotes::install_github("DocEd/commonEHR")'
+          Rscript -e 'remotes::install_github("DocEd/wranglEHR")'
