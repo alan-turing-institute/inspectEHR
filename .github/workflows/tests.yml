@@ -19,3 +19,5 @@ jobs:
           Rscript -e 'install.packages("remotes")'
           Rscript -e 'remotes::install_github("DocEd/commonEHR")'
           Rscript -e 'remotes::install_github("DocEd/wranglEHR")'
+      - name: Install dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
