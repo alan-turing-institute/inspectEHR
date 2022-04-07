@@ -16,8 +16,4 @@ jobs:
         env:
           GITHUB_PAT: ${{ secrets.PAT }}
         run: |
-          Rscript -e 'install.packages("remotes")'
-          Rscript -e 'remotes::install_github("DocEd/commonEHR")'
-          Rscript -e 'remotes::install_github("DocEd/wranglEHR")'
           Rscript -e 'install.packages("devtools")'
-          Rscript -e 'devtools::install_local(".")'
