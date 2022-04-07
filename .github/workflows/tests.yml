@@ -8,6 +8,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Dependencies
+        run: sudo apt install libcurl4-openssl-dev
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
         with:
@@ -16,11 +18,7 @@ jobs:
         env:
           GITHUB_PAT: ${{ secrets.PAT }}
         run: |
-          Rscript -e 'install.packages("renv")'
-          Rscript -e 'renv::activate()'
-          Rscript -e 'renv::install("DocEd/commonEHR")'
-          Rscript -e 'renv::install("DocEd/wranglEHR")'
-          Rscript -e 'renv::install(".")'
+          Rscript install_ci.R
       - name: TestThat
         run: |
           Rscript -e 'packageVersion("inspectEHR")'
