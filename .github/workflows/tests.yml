@@ -19,8 +19,6 @@ jobs:
           Rscript -e 'install.packages("renv")'
           Rscript -e 'renv::activate()'
           Rscript -e 'options(renv.settings = list(package.dependency.fields = c("Imports", "Depends", "LinkingTo", "Suggests")))'
-          Rscript -e 'renv::install("DocEd/commonEHR")'
-          Rscript -e 'renv::install("DocEd/wranglEHR")'
           Rscript -e 'renv::install()'
       - name: TestThat
         run: |
