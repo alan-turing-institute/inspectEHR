@@ -1,4 +1,4 @@
-episodes <- characterise_episodes(.debug = TRUE)
+episodes <- characterise_episodes(.debug=TRUE)
 ve_episodes <- evaluate_episodes(episodes)
 spells <- characterise_spells(ve_episodes)
 
