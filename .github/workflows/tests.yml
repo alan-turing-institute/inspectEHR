@@ -24,5 +24,4 @@ jobs:
           Rscript -e 'renv::install()'
       - name: TestThat
         run: |
-          Rscript -e 'packageVersion("inspectEHR")'
           Rscript -e 'library(inspectEHR);testthat::test_file("tests/testthat/test_perform_evaluation.R")'
