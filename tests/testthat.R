@@ -1,3 +1,4 @@
-library(testthat)
-library(inspectEHR)
-test_check("inspectEHR")
+library(devtools)
+load_all()
+
+testthat::test_file("./tests/testthat/test_perform_evaluation.R")
