@@ -1,28 +1,28 @@
 test_that("we can run in .debug with a SQLite database", {
 
-  connection <- dbConnect(RSQLite::SQLite(), ":memory:")
+  connection <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
   
   events <- .events %>%
     mutate(
       datetime = strftime(datetime),
       date = strftime(date, format = "%Y-%m-%d"),
       time = strftime(time, format = "%H:%M:%S")) %>%
-    dbWriteTable(connection, "events", .)
+    DBI::dbWriteTable(connection, "events", .)
   
   episodes <- .episodes %>%
     mutate(
       start_date = strftime(start_date)
       ) %>%
-    dbWriteTable(connection, "episodes", .)
+    DBI::dbWriteTable(connection, "episodes", .)
   
   provenance <- .provenance %>%
     mutate(
       date_created = strftime(date_created),
       date_parsed = strftime(date_parsed),
     ) %>%
-    dbWriteTable(connection, "provenance", .)
+    DBI::dbWriteTable(connection, "provenance", .)
   
-  variables <- dbWriteTable(connection, "variables", .variables)
+  variables <- DBI::dbWriteTable(connection, "variables", .variables)
   
   my_result <- inspectEHR::perform_evaluation(
     connection = connection,
