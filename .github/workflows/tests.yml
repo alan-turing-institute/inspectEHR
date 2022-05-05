@@ -28,4 +28,4 @@ jobs:
       - name: TestThat
         run: |
           Rscript -e 'packageVersion("inspectEHR")'
-          Rscript -e 'testthat::test_file("tests/testthat/test_perform_evaluation.R")'
+          Rscript -e 'testthat::test_file("tests/testthat/test_perform_evaluation.R", stop_on_warning=TRUE)'
