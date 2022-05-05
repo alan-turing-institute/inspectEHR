@@ -1,6 +1,3 @@
-library(inspectEHR)
-library(testthat)
-
 test_that("we can run in .debug with a SQLite database", {
   
   connection <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
