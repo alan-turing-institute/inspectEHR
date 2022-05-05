@@ -33,7 +33,7 @@
 #'
 #' @importFrom dplyr select arrange pull left_join distinct collect tibble
 #'   anti_join mutate copy_to summarise_all bind_rows
-#' @importFrom DBI dbWriteTable
+#' @importFrom DBI dbWriteTable dbConnect
 #' @importFrom glue glue
 #' @importFrom lubridate yday
 #' @importFrom readr write_csv
@@ -46,6 +46,7 @@
 #' cli_alert cli_text
 #' @importFrom purrr iwalk map
 #' @importFrom ggplot2 ggsave
+#' @importFrom RSQLite SQLite
 #'
 #' @return TRUE if completes without errors
 #'
@@ -56,8 +57,9 @@ perform_evaluation <- function(
   output_folder = NULL,
   translate_site = NULL,
   test_comparisons = NULL,
-  verbose = TRUE,
-  .debug = FALSE) {
+  verbose = TRUE
+  #,.debug = FALSE
+  ) {
 
   if (verbose) {
     cli_h1("Starting data quality evaluation")
@@ -76,11 +78,14 @@ perform_evaluation <- function(
   if (verbose) cli_h1("Starting episode evaluation")
 
   # Useful Tables
-  core <- make_core(connection = connection, .debug = .debug)
+  core <- make_core(connection = connection
+                    #,.debug = .debug
+                    )
   reference <- make_reference(
     connection = connection,
-    translate_site = translate_site,
-    .debug = .debug)
+    translate_site = translate_site
+    #,.debug = .debug
+    )
 
   if (verbose) cli_alert_success("Working tables built")
 
@@ -106,12 +111,12 @@ perform_evaluation <- function(
   tbls <- vector(mode = "list", length = 4)
   names(tbls) <- c("events", "episodes", "provenance", "variables")
 
-  if (.debug) {
-    tbls[["episodes"]] <- .episodes
-    tbls[["provenance"]] <- .provenance
-    tbls[["variables"]] <- .variables
-    tbls[["events"]] <- .events
-  } else {
+  # if (.debug) {
+  #   tbls[["episodes"]] <- .episodes
+  #   tbls[["provenance"]] <- .provenance
+  #   tbls[["variables"]] <- .variables
+  #   tbls[["events"]] <- .events
+  # } else {
     # Collect small tables into working memory
     tbls[["episodes"]] <- collect(tbl(connection, "episodes"))
     tbls[["provenance"]] <- collect(tbl(connection, "provenance"))
@@ -119,7 +124,7 @@ perform_evaluation <- function(
 
     # Keep events table in db
     tbls[["events"]] <- tbl(connection, "events")
-  }
+  # }
 
   # # Cases ----
   # # Gives a tibble of admission numbers (patients/episodes) by week
@@ -167,7 +172,9 @@ perform_evaluation <- function(
 
   # Characterise episodes
   episode_length <-
-    characterise_episodes(connection = connection, .debug = .debug)
+    characterise_episodes(connection = connection
+                          #,.debug = .debug
+                          )
   episode_length <- evaluate_episodes(episode_length)
 
   if (verbose) cli_alert_success("Episode characterisation finished")
@@ -179,12 +186,12 @@ perform_evaluation <- function(
   if (DBI::dbExistsTable(connection, "episodes_quality")) {
     DBI::dbRemoveTable(connection, "episodes_quality")
   }
-
+  
   write_notify(connection = connection,
                target_name = "episodes_quality",
                local_table = episodes_quality,
                verbose = verbose)
-
+  
   if (verbose) {
     cli_alert_success("Finished episode evaluation")
     cli_h2("Starting event evaluation")
@@ -232,8 +239,9 @@ perform_evaluation <- function(
   if (verbose) cli_h2("Evaluating event chronology")
 
   chrono <- evaluate_chronology(connection = connection,
-                                decompose = FALSE,
-                                .debug = .debug)
+                                decompose = FALSE
+                                #,.debug = .debug
+                                )
 
   if (write_plots) {
     chrono_plot <- plot_chronology(chrono)
@@ -258,8 +266,9 @@ perform_evaluation <- function(
   }
 
   chrono <- decompose_chronology(connection = connection,
-                                 x = chrono,
-                                 .debug = .debug)
+                                 x = chrono
+                                 #,.debug = .debug
+                                 )
 
   write_notify(connection = connection,
                target_name = "events_quality",

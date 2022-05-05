@@ -94,7 +94,7 @@ extract <- function(core_table = NULL, code_name = NULL, translate_site = NULL) 
 #' @importFrom dplyr filter collect select rename arrange
 extract_1d <- function(core_table = NULL, input = NULL, data_location = NULL) {
 
-  core_table %>%
+  out <- core_table %>%
     filter(.data$code_name == input) %>%
     collect() %>%
     select(
@@ -106,7 +106,34 @@ extract_1d <- function(core_table = NULL, input = NULL, data_location = NULL) {
     ) %>%
     rename(value = .data[[data_location]]) %>%
     arrange(.data$episode_id)
+  
+  demographics <- .variables %>%
+    collect() %>%
+    mutate(nas = .variables %>%
+             select(-c(.data$code_name, .data$long_name, .data$primary_column)) %>%
+             collect() %>%
+             as_tibble() %>%
+             apply(1, function(x) sum(!is.na(x)))) %>%
+    filter(.data$nas == 1) %>%
+    select(.data$code_name, .data$primary_column)
+  
+  if (input %in% demographics$code_name[demographics$primary_column %in% c("date", "datetime", "time")]) {
+    
+    check_class <- class(out$value)
+    true_class <- demographics$primary_column[demographics$code_name == input]
+    
+    if (check_class == "character") {
+      
+      if (true_class == "date") out$value <- as.Date(out$value)
+      if (true_class == "datetime") out$value <- as.POSIXct(out$value)
+      if (true_class == "time") out$value <- hms::as_hms(out$value)
+      
+    }
+    
+  }
 
+  return(out)
+  
 }
 
 
@@ -151,6 +178,10 @@ extract_2d <- function(core_table = NULL, input = NULL, data_location = NULL) {
 
     df <- df %>%
       rename(!!!meta_names)
+  }
+  
+  if (class(df$datetime) == "character") {
+    df$datetime <- as.POSIXct(df$datetime)
   }
 
   return(df)

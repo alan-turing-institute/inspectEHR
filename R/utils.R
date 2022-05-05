@@ -110,18 +110,22 @@ transact_sql <- function(ctn, query_str) {
 #' head(ref)
 #' DBI::dbDisconnect(ctn)
 #' }
-make_reference <- function(connection = NULL, translate_site = NULL, .debug = FALSE) {
-  if (is.null(connection) & !.debug) {
+make_reference <- function(connection = NULL, translate_site = NULL
+                           #, .debug = FALSE
+                           ) {
+  if (is.null(connection)
+      #& !.debug
+      ) {
     abort("You must supply a database connection")
   }
 
-  if (.debug) {
-    episodes <- .episodes
-    provenance <- .provenance
-  } else {
+  # if (.debug) {
+  #   episodes <- .episodes
+  #   provenance <- .provenance
+  # } else {
     episodes <- tbl(connection, "episodes")
     provenance <- tbl(connection, "provenance")
-  }
+  # }
 
   out <- left_join(
     episodes, provenance, by = c("provenance" = "file_id")) %>%
@@ -150,6 +154,10 @@ make_reference <- function(connection = NULL, translate_site = NULL, .debug = FA
 
     }
 
+  }
+  
+  if (class(out$start_date) == "character") {
+    out$start_date <- as.POSIXct(out$start_date)
   }
 
   return(out)

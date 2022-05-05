@@ -67,8 +67,9 @@ evaluate_chronology <- function(connection = NULL,
   dtb <- extract_demographics(
     connection = connection,
     code_names = chrono_codes$code_name[!is.na(chrono_codes$code_name)],
-    rename = chrono_codes$order[!is.na(chrono_codes$code_name)],
-    .debug = .debug) %>%
+    rename = chrono_codes$order[!is.na(chrono_codes$code_name)]
+    #,.debug = .debug
+    ) %>%
     add_column(z = Sys.time())
 
   failures <- dtb %>%
