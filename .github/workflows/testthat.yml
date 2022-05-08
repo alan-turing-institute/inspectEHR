@@ -1,7 +1,11 @@
 name: Run tests
 on:
-  - push
-  - pull_request
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 jobs:
   test-job:
     runs-on: ubuntu-latest
