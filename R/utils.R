@@ -98,7 +98,6 @@ transact_sql <- function(ctn, query_str) {
 #'   obfuscate the real names (e.g. `c("Site A", "Site B")` etc). This is a 1:1
 #'   mapping so doesn't confer any real privacy advantage, but is useful as a
 #'   means to casually obscure data origins.
-#' @param .debug logical flag to use internal simulated data for testing
 #'
 #' @return a tibble with episode level data with site
 #' @export
@@ -110,22 +109,13 @@ transact_sql <- function(ctn, query_str) {
 #' head(ref)
 #' DBI::dbDisconnect(ctn)
 #' }
-make_reference <- function(connection = NULL, translate_site = NULL
-                           #, .debug = FALSE
-                           ) {
-  if (is.null(connection)
-      #& !.debug
-      ) {
+make_reference <- function(connection = NULL, translate_site = NULL) {
+  if (is.null(connection)) {
     abort("You must supply a database connection")
   }
 
-  # if (.debug) {
-  #   episodes <- .episodes
-  #   provenance <- .provenance
-  # } else {
-    episodes <- tbl(connection, "episodes")
-    provenance <- tbl(connection, "provenance")
-  # }
+  episodes <- tbl(connection, "episodes")
+  provenance <- tbl(connection, "provenance")
 
   out <- left_join(
     episodes, provenance, by = c("provenance" = "file_id")) %>%
@@ -170,7 +160,6 @@ make_reference <- function(connection = NULL, translate_site = NULL
 #'   for querying
 #'
 #' @param connection a database connection returned by [DBI::dbConnect()]
-#' @param .debug logical flag to use internal simulated data for testing
 #'
 #' @importFrom rlang abort
 #' @importFrom dplyr tbl left_join inner_join
@@ -187,22 +176,16 @@ make_reference <- function(connection = NULL, translate_site = NULL
 #' head(core)
 #' DBI::dbDisconnect(ctn)
 #' }
-make_core <- function(connection = NULL, .debug = FALSE) {
+make_core <- function(connection = NULL) {
 
-  if (is.null(connection) & !.debug) {
+  if (is.null(connection)) {
     abort("You must supply a database connection")
   }
 
-  if (.debug) {
-    events <- .events
-    episodes <- .episodes
-    provenance <- .provenance
-  } else {
-    events <- tbl(connection, "events")
-    episodes <- tbl(connection, "episodes")
-    provenance <- tbl(connection, "provenance")
-  }
-
+  events <- tbl(connection, "events")
+  episodes <- tbl(connection, "episodes")
+  provenance <- tbl(connection, "provenance")
+  
   episodes %>%
     left_join(provenance, by = c("provenance" = "file_id")) %>%
     inner_join(events, by = "episode_id")

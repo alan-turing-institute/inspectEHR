@@ -29,7 +29,6 @@
 #'   `.comparisons_lookup` object. This object also serves to illustrate the
 #'   correct format to use.
 #' @param verbose logical flag to print progress to the console
-#' @param .debug logical flag to use internal test data
 #'
 #' @importFrom dplyr select arrange pull left_join distinct collect tibble
 #'   anti_join mutate copy_to summarise_all bind_rows
@@ -58,7 +57,6 @@ perform_evaluation <- function(
   translate_site = NULL,
   test_comparisons = NULL,
   verbose = TRUE
-  #,.debug = FALSE
   ) {
 
   if (verbose) {
@@ -78,13 +76,10 @@ perform_evaluation <- function(
   if (verbose) cli_h1("Starting episode evaluation")
 
   # Useful Tables
-  core <- make_core(connection = connection
-                    #,.debug = .debug
-                    )
+  core <- make_core(connection = connection)
   reference <- make_reference(
     connection = connection,
     translate_site = translate_site
-    #,.debug = .debug
     )
 
   if (verbose) cli_alert_success("Working tables built")
@@ -111,20 +106,13 @@ perform_evaluation <- function(
   tbls <- vector(mode = "list", length = 4)
   names(tbls) <- c("events", "episodes", "provenance", "variables")
 
-  # if (.debug) {
-  #   tbls[["episodes"]] <- .episodes
-  #   tbls[["provenance"]] <- .provenance
-  #   tbls[["variables"]] <- .variables
-  #   tbls[["events"]] <- .events
-  # } else {
-    # Collect small tables into working memory
-    tbls[["episodes"]] <- collect(tbl(connection, "episodes"))
-    tbls[["provenance"]] <- collect(tbl(connection, "provenance"))
-    tbls[["variables"]] <- collect(tbl(connection, "variables"))
+  # Collect small tables into working memory
+  tbls[["episodes"]] <- collect(tbl(connection, "episodes"))
+  tbls[["provenance"]] <- collect(tbl(connection, "provenance"))
+  tbls[["variables"]] <- collect(tbl(connection, "variables"))
 
-    # Keep events table in db
-    tbls[["events"]] <- tbl(connection, "events")
-  # }
+  # Keep events table in db
+  tbls[["events"]] <- tbl(connection, "events")
 
   # # Cases ----
   # # Gives a tibble of admission numbers (patients/episodes) by week
@@ -172,9 +160,7 @@ perform_evaluation <- function(
 
   # Characterise episodes
   episode_length <-
-    characterise_episodes(connection = connection
-                          #,.debug = .debug
-                          )
+    characterise_episodes(connection = connection)
   episode_length <- evaluate_episodes(episode_length)
 
   if (verbose) cli_alert_success("Episode characterisation finished")
@@ -240,7 +226,6 @@ perform_evaluation <- function(
 
   chrono <- evaluate_chronology(connection = connection,
                                 decompose = FALSE
-                                #,.debug = .debug
                                 )
 
   if (write_plots) {
@@ -266,9 +251,7 @@ perform_evaluation <- function(
   }
 
   chrono <- decompose_chronology(connection = connection,
-                                 x = chrono
-                                 #,.debug = .debug
-                                 )
+                                 x = chrono)
 
   write_notify(connection = connection,
                target_name = "events_quality",
