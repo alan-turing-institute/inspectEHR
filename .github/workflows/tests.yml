@@ -27,5 +27,4 @@ jobs:
           Rscript install_ci.R
       - name: TestThat
         run: |
-          Rscript -e 'packageVersion("inspectEHR")'
-          Rscript -e 'testthat::test_file("tests/testthat/test_perform_evaluation.R")'
+          Rscript test_ci.R
