@@ -5,7 +5,7 @@
 #'   database in one easy sweep. This can take some time so please grab a
 #'   coffee!
 #'
-#' @param database a database object returned by [DBI::dbConnect()]
+#' @param connection a database connection object returned by [DBI::dbConnect()]
 #' @param output_folder character vector length 1 for the file path name for
 #'   plots to be stored. If left as `NULL` (the default) then no plots will be
 #'   written out.
@@ -237,18 +237,24 @@ perform_evaluation <- function(
 
   if (write_plots) {
     chrono_plot <- plot_chronology(chrono)
-    ggsave(
-      filename = file.path(
-        output_folder,
-        "plots/chrono_events.pdf"
-      ),
-      plot = chrono_plot,
-      height = full_height/2,
-      width = full_width,
-      units = "mm"
-    )
+    tryCatch({
+      ggsave(
+        filename = file.path(
+          output_folder,
+          "plots/chrono_events.pdf"
+        ),
+        plot = chrono_plot,
+        height = full_height/2,
+        width = full_width,
+        units = "mm"
+      )
+      if (verbose) cli_alert_success("Chronology drawn")
+    },
+    error = function(cond){
+      print("Unable to save chrono events as pdf:")
+      print(cond)
+    })
     rm(chrono_plot)
-    if (verbose) cli_alert_success("Chronology drawn")
   }
 
   chrono <- decompose_chronology(connection = connection,
@@ -488,8 +494,7 @@ perform_evaluation <- function(
 
   cli_alert_success("Finished event comparison evaluation")
   cli_alert_success("Finished event level evaluation")
-  # close the connection
-  DBI::dbDisconnect(connection)
+
   return(TRUE)
 }
 
@@ -534,5 +539,6 @@ setup_folders <- function(output_folder = NULL, write_plots = TRUE) {
   if (!dir.exists(file.path(output_folder, "plots/episodes"))) {
     dir.create(file.path(output_folder, "plots/episodes"))
   }
+
   cli_alert_success("Folder setup completed successfully")
 }

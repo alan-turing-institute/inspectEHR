@@ -8,17 +8,24 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Dependencies
+        run: sudo apt install libcurl4-openssl-dev
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
         with:
           r-version: 4.1.2
-      - name: Install dependencies
+      - name: Set up cache
+        uses: actions/cache@v2
+        id: cache
+        with:
+          path: /home/runner/work/_temp/Library
+          key: ${{ hashFiles('install_ci.R') }}-${{ hashFiles('DESCRIPTION') }}
+      - name: Install package
         env:
           GITHUB_PAT: ${{ secrets.PAT }}
         run: |
-          Rscript -e 'install.packages("renv")'
-          Rscript -e 'renv::activate()'
-          Rscript -e 'renv::install("DocEd/commonEHR")'
-          Rscript -e 'renv::install("DocEd/wranglEHR")'
-          Rscript -e 'renv::install(".")'
+          Rscript install_ci.R
+      - name: TestThat
+        run: |
           Rscript -e 'packageVersion("inspectEHR")'
+          Rscript -e 'testthat::test_file("tests/testthat/test_perform_evaluation.R")'
