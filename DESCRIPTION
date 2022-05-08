@@ -48,6 +48,3 @@ Suggests:
 VignetteBuilder: knitr
 URL: https://github.com/CC-HIC/inspectEHR
 BugReports: https://github.com/CC-HIC/inspectEHR
-Remotes:
-    alan-turing-institute/commonEHR,
-    alan-turing-institute/wranglEHR
