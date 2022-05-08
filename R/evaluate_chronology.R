@@ -10,7 +10,6 @@
 #' @param connection a connection to the CC-HIC database
 #' @param decompose logical flag to output an object (if `TRUE`) ready to import
 #'   into the `events_quality` database table.
-#' @param .debug logical flag to run in debug mode.
 #'
 #' @importFrom wranglEHR extract_demographics
 #' @importFrom tibble tribble add_column
@@ -29,10 +28,9 @@
 #' @export
 #' @md
 evaluate_chronology <- function(connection = NULL,
-                                decompose = TRUE,
-                                .debug = FALSE){
+                                decompose = TRUE){
 
-  if (is.null(connection) && !.debug) {
+  if (is.null(connection)) {
     abort("You must supply a database connection")
   }
 
@@ -67,8 +65,8 @@ evaluate_chronology <- function(connection = NULL,
   dtb <- extract_demographics(
     connection = connection,
     code_names = chrono_codes$code_name[!is.na(chrono_codes$code_name)],
-    rename = chrono_codes$order[!is.na(chrono_codes$code_name)],
-    .debug = .debug) %>%
+    rename = chrono_codes$order[!is.na(chrono_codes$code_name)]
+    ) %>%
     add_column(z = Sys.time())
 
   failures <- dtb %>%
@@ -93,7 +91,7 @@ evaluate_chronology <- function(connection = NULL,
     select(-.data$eva)
 
   if (decompose) {
-    decompose_chronology(connection = connection, x = failures, .debug = .debug)
+    decompose_chronology(connection = connection, x = failures)
   } else {
     return(failures)
   }
@@ -111,20 +109,19 @@ evaluate_chronology <- function(connection = NULL,
 #'
 #' @param connection a connection to the CC-HIC database.
 #' @param x the output returned from the [evaluate_chronology()] function.
-#' @param .debug logical flag to run in debug mode.
 #'
 #' @seealso [evaluate_chronology()]
 #'
 #' @template return-event-quality
 #' @export
 #' @md
-decompose_chronology <- function(connection, x, .debug = FALSE) {
+decompose_chronology <- function(connection, x) {
 
-  if (is.null(connection) && !.debug) {
+  if (is.null(connection)) {
     abort("You must supply a database connection")
   }
 
-  core <- make_core(connection = connection, .debug = .debug)
+  core <- make_core(connection = connection)
 
   pull_codes <- unique(x$code_name)
   pull_epi <- unique(x$episode_id)

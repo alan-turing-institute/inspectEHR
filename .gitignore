@@ -1,6 +1,6 @@
 # Functional test output folder
 tests/testthat/output
-
+/output
 
 # History files
 .Rhistory

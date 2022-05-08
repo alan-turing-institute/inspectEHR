@@ -266,20 +266,20 @@ simple_type <- xml2::xml_find_all(hic_schema, xpath = "//xs:simpleType")
 
 ## Add in a few intentional duplicates. One of each data type
 
-dup_codes <- qref %>%
-  filter(code_name %in% unique(.events$code_name)) %>%
-  distinct(class, .keep_all = TRUE) %>%
-  select(code_name) %>%
-  pull()
-
-incr_from <- max(.events$event_id)
-
-.events <- dup_codes %>%
-  map_dfr(
-    ~ .events[.events$code_name == .x,][1,]
-  ) %>%
-  mutate(event_id = (incr_from+1):(incr_from+n())) %>%
-  bind_rows(.events)
+# dup_codes <- qref %>%
+#   filter(code_name %in% unique(.events$code_name)) %>%
+#   distinct(class, .keep_all = TRUE) %>%
+#   select(code_name) %>%
+#   pull()
+# 
+# incr_from <- max(.events$event_id)
+# 
+# .events <- dup_codes %>%
+#   map_dfr(
+#     ~ .events[.events$code_name == .x,][1,]
+#   ) %>%
+#   mutate(event_id = (incr_from+1):(incr_from+n())) %>%
+#   bind_rows(.events)
 
 .comparisons_lookup <- tibble::tribble(
   ~event_a, ~event_b, ~operation,

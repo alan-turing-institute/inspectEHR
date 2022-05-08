@@ -9,11 +9,12 @@ perform_evaluation(
   output_folder = NULL,
   translate_site = NULL,
   test_comparisons = NULL,
-  verbose = TRUE,
-  .debug = FALSE
+  verbose = TRUE
 )
 }
 \arguments{
+\item{connection}{a database connection object returned by \code{\link[DBI:dbConnect]{DBI::dbConnect()}}}
+
 \item{output_folder}{character vector length 1 for the file path name for
 plots to be stored. If left as \code{NULL} (the default) then no plots will be
 written out.}
@@ -44,8 +45,6 @@ correct format to use.}
 \item{verbose}{logical flag to print progress to the console}
 
 \item{.debug}{logical flag to use internal test data}
-
-\item{database}{a database object returned by \code{\link[DBI:dbConnect]{DBI::dbConnect()}}}
 }
 \value{
 TRUE if completes without errors

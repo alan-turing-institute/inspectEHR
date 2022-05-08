@@ -17,8 +17,6 @@
 #'   * declaration of brainstem death: `0400`
 #'
 #' @param connection a connection to the CC-HIC database
-#' @param .debug logical flag. If \code{TRUE} the function will extract from
-#'  internal package test data
 #'
 #' @return a tibble that characterises each episode. The attribute
 #'   `invalid_records` contains information related to invalid records and the
@@ -29,14 +27,17 @@
 #' @importFrom dplyr setdiff tbl
 #' @importFrom tidyselect ends_with
 #' @md
-characterise_episodes <- function(connection = NULL, .debug = FALSE) {
+characterise_episodes <- function(connection = NULL
+                                  ) {
 
-  if (is.null(connection) && !.debug) {
+  if (is.null(connection)
+      ) {
     abort("You must supply a database connection")
   }
 
   # Extract Data
-  df <- prep_characterise_episodes(connection, .debug = .debug)
+  df <- prep_characterise_episodes(connection
+                                   )
 
   # Reconcile dates and times in datetimes and remove the old columns
   df <- df %>%
@@ -174,13 +175,8 @@ characterise_episodes <- function(connection = NULL, .debug = FALSE) {
       difftime(
         .data$epi_end_dttm, .data$epi_start_dttm, units = "hours"))/24)
 
-  if (.debug) {
-    episodes <- .episodes
-    provenance <- .provenance
-  } else {
     episodes <- tbl(connection, "episodes")
     provenance <- tbl(connection, "provenance")
-  }
 
   df <- left_join(episodes, provenance,
                   by = c("provenance" = "file_id")
@@ -209,9 +205,11 @@ characterise_episodes <- function(connection = NULL, .debug = FALSE) {
 #' @importFrom magrittr %>%
 #'
 #' @param connection a connection to the CC-HIC database
-prep_characterise_episodes <- function(connection = NULL, .debug = FALSE) {
+prep_characterise_episodes <- function(connection = NULL
+                                       ) {
 
-  if (is.null(connection) && !.debug) {
+  if (is.null(connection)
+      ) {
     abort("You must supply a database connection")
   }
 
@@ -233,8 +231,8 @@ prep_characterise_episodes <- function(connection = NULL, .debug = FALSE) {
   df <- extract_demographics(
     connection = connection,
     code_names = df_extract$codes,
-    rename = df_extract$names,
-    .debug = .debug)
+    rename = df_extract$names
+    )
 
   ## For this particular purpose, we need to add in columns that might
   ## be all NA, since extract_demographics does not return fields that do
